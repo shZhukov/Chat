@@ -23,7 +23,7 @@ public class ClientHandler {
 
             new Thread(() -> {
                 try {
-//                    socket.setSoTimeout(5000);
+                    socket.setSoTimeout(5000);
 //                    socket.setSoTimeout(0);
                     // цикл аутентифиукаии
                     while (true) {
@@ -42,6 +42,7 @@ public class ClientHandler {
                                     sendMsg("/authok " + nickName);
                                     server.subscribe(this);
                                     System.out.println("Клиент " + nickName + " подключился");
+                                    socket.setSoTimeout(0);
                                     break;
                                 } else {
                                     sendMsg("С данной учетной записью уже зашли");
@@ -86,6 +87,12 @@ public class ClientHandler {
                         } else {
                             server.broadcastMsg(this, str);
                         }
+                    }
+                } catch (java.net.SocketTimeoutException e){
+                    try {
+                        socket.close();
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
